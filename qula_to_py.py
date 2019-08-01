@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 def sep_string(s: str) -> tuple:
     nums = ''
     assert s != ''
@@ -20,7 +22,7 @@ def sep_string(s: str) -> tuple:
 
 
 def qula_dicts(filename: str) -> tuple:
-    with open(filename, 'r') as f:
+    with open(filename, 'r', encoding="utf-8") as f:
         lines = f.readlines()
 
     questions = {'ignore': ''}
