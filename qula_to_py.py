@@ -7,18 +7,21 @@ def sep_string(s: str) -> tuple:
         if char.isdigit():
             nums += char
         elif char == '.' and nums[-1] != '.':
-            if s[i+1] != ' ':
+            if i < len(s) - 1 and s[i+1] != ' ':
                 nums += '.'
             else:
-                return nums, s[i+2:] + '\n', 'question'
+                return nums, s[i+2:], 'question'
         elif char == ':' and nums[-1] != '.' and s[i+1] == ' ':
-            return nums, s[i+2:] + '\n', 'answer'
+            return nums, s[i+2:], 'answer'
         else:
-            return None, s + '\n', 'continue'
-    if char == '.' and nums[-1] != '.':
-        return nums, s[i+2:] + '\n', 'question'
-    elif char == ':' and nums[-1] != '.':
-        return nums, s[i+2:] + '\n', 'answer'
+            break
+    else:
+        if char == '.' and nums[-1] != '.':
+            return nums, s[i+2:], 'question'
+        elif char == ':' and nums[-1] != '.':
+            return nums, s[i+2:], 'answer'
+    return '', s, 'continue'
+
 
 
 def qula_dicts(filename: str) -> tuple:
@@ -29,7 +32,7 @@ def qula_dicts(filename: str) -> tuple:
     answers = {'ignore': {}}
     current_question = 'ignore'
     current_answer = 'ignore'
-    current_block = ('question', 'ignore')
+    current_block = 'question'
 
     for line in lines:
         if line.isspace():
@@ -39,23 +42,26 @@ def qula_dicts(filename: str) -> tuple:
             txt = txt[1:]
         if txt_type == 'question':
             current_question = num
-            current_block = ('question', num)
+            current_block = 'question'
             questions[num] = txt
         elif txt_type == 'answer':
-            current_block = ('answer', num)
+            current_block = 'answer'
             if current_question in answers:
                 answers[current_question].update({num: txt})
             else:
                 answers[current_question] = {num: txt}
         else:
-            if current_block[0] == 'question':
-                questions[current_question] += txt
-            elif current_block[0] == 'answer':
+            if current_block == 'question':
+                questions[current_question] += '\n' + txt
+            elif current_block == 'answer':
                 answers[current_answer].update({num: txt})
     return questions, answers
 
 
 if __name__ == '__main__':
+    from pprint import pprint
     questions, answers = qula_dicts('example.qula')
-    print(f'questions={questions}')
-    print(f'answers={answers}')
+    print('QUESTIONS')
+    pprint(questions)
+    print('ANSWERS')
+    pprint(answers)
