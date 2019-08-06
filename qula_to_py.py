@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 def sep_string(s: str) -> tuple:
     nums = ''
     assert s != ''
@@ -7,21 +8,20 @@ def sep_string(s: str) -> tuple:
         if char.isdigit():
             nums += char
         elif char == '.' and nums[-1] != '.':
-            if i < len(s) - 1 and s[i+1] != ' ':
+            if i < len(s) - 1 and s[i + 1] != ' ':
                 nums += '.'
             else:
-                return nums, s[i+2:], 'question'
-        elif char == ':' and nums[-1] != '.' and s[i+1] == ' ':
-            return nums, s[i+2:], 'answer'
+                return nums, s[i + 2:], 'question'
+        elif char == ':' and nums[-1] != '.' and s[i + 1] == ' ':
+            return nums, s[i + 2:], 'answer'
         else:
             break
     else:
         if char == '.' and nums[-1] != '.':
-            return nums, s[i+2:], 'question'
+            return nums, s[i + 2:], 'question'
         elif char == ':' and nums[-1] != '.':
-            return nums, s[i+2:], 'answer'
+            return nums, s[i + 2:], 'answer'
     return '', s, 'continue'
-
 
 
 def qula_dicts(filename: str) -> tuple:
@@ -45,6 +45,7 @@ def qula_dicts(filename: str) -> tuple:
             current_block = 'question'
             questions[num] = txt
         elif txt_type == 'answer':
+            current_answer = num
             current_block = 'answer'
             if current_question in answers:
                 answers[current_question].update({num: txt})
@@ -54,12 +55,13 @@ def qula_dicts(filename: str) -> tuple:
             if current_block == 'question':
                 questions[current_question] += '\n' + txt
             elif current_block == 'answer':
-                answers[current_answer].update({num: txt})
+                answers[current_question][current_answer] += '\n' + txt
     return questions, answers
 
 
 if __name__ == '__main__':
     from pprint import pprint
+
     questions, answers = qula_dicts('example.qula')
     print('QUESTIONS')
     pprint(questions)
